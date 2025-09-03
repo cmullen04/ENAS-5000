@@ -1,0 +1,55 @@
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy.optimize import fsolve
+import math
+
+# Known values
+T0 = 90  # Initial temperature in Fahrenheit
+T_env = 60  # Ambient temperature in Fahrenheit
+k = 0.0068992871486951435  # Cooling rate constant
+time_limit = 300  # Time limit in minutes for the plot
+
+# Define the function for the temperature at a given time t
+def temperature_function(t, k, T0, T_env):
+    return T_env + (T0 - T_env) * np.exp(-k * t)
+
+# Time values for plotting
+time_values = np.linspace(0, time_limit, 300)
+
+# Temperature values using the function
+temperature_values = temperature_function(time_values, k, T0, T_env)
+
+# Target temperatures and time points
+T_10 = 88
+T_20 = 86.13
+time_target = 259.7
+T_target = 65
+
+# Define the function to solve for time when the temperature reaches 65°F
+def time_to_reach_target(temp, k, T0, T_env):
+    return lambda t: T_env + (T0 - T_env) * math.exp(-k * t) - temp
+
+# Solve for the time to reach 65°F
+time_target = fsolve(time_to_reach_target(65, k, T0, T_env), 0)[0]
+
+# Plotting the temperature curve
+plt.figure(figsize=(10, 6))
+plt.plot(time_values, temperature_values, label="Temperature of the Object", color="blue")
+plt.scatter([10, 20, time_target], [T_10, T_20, T_target], color="red", zorder=5)
+plt.text(10, T_10, f' ({10} min, {T_10}°F)', fontsize=9, verticalalignment='bottom')
+plt.text(20, T_20, f' ({20} min, {T_20:.2f}°F)', fontsize=9, verticalalignment='bottom')
+plt.text(time_target, T_target, f' ({time_target:.2f} min, {T_target}°F)', fontsize=9, verticalalignment='top')
+
+# Adding labels and title
+plt.xlabel("Time (minutes)")
+plt.ylabel("Temperature (°F)")
+plt.title("Cooling of an Object Over Time")
+plt.axhline(y=T_target, color='gray', linestyle='--', linewidth=0.7)
+plt.axvline(x=time_target, color='gray', linestyle='--', linewidth=0.7)
+
+# Legend and grid
+plt.legend()
+plt.grid(True, linestyle='--', alpha=0.6)
+
+# Show plot
+plt.show()
