@@ -1,0 +1,36 @@
+# Install matplotlib if not already installed (usually it is pre-installed in Colab)
+!pip install matplotlib
+
+# Import libraries
+import numpy as np
+import matplotlib.pyplot as plt
+
+#define constants
+#choose the first values
+omega_zero = 2
+zeta = .5
+y_zero = 1
+y_dot_zero = 3
+
+
+#calculate these values
+omega_d = omega_zero * np.sqrt(1 - zeta ** 2)  # Damped natural frequency
+A = y_zero
+B = (y_dot_zero + zeta * omega_zero * y_zero) / omega_d
+
+#define time vector
+start = 0
+stop = 10
+t = np.linspace(start, stop, num=50, endpoint=True)
+
+
+#calculate soltuion
+y = np.exp(-zeta * omega_zero * t) * (A * np.cos(omega_d * t) + B * np.sin(omega_d * t))
+
+#plot solution
+plt.plot(t, y)
+plt.xlabel('Time')
+plt.ylabel('y(t)')
+plt.title('Damped Oscillation')
+plt.grid(True)
+plt.show()
